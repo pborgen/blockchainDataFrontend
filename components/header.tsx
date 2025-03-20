@@ -39,8 +39,6 @@ export default function Header({
         return "Analytics";
       case "settings":
         return "Settings";
-      case "help":
-        return "Help & Support";
       default:
         return "Dashboard";
     }
@@ -66,7 +64,7 @@ export default function Header({
             <div className="relative h-8 w-8">
               <div className="absolute inset-0 animate-pulse rounded-full bg-cyan-500 blur-sm"></div>
               <div className="relative flex h-full w-full items-center justify-center rounded-full bg-black text-cyan-400">
-                <span className="font-mono text-xs font-bold">BC</span>
+                <span className="font-mono text-xs font-bold">HL</span>
               </div>
             </div>
             <div>

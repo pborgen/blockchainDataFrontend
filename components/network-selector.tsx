@@ -18,30 +18,9 @@ export interface Network {
 
 const networks: Network[] = [
   {
-    id: "ethereum",
-    name: "Ethereum",
-    chainId: 1,
-  },
-  {
-    id: "polygon",
-    name: "Polygon",
-    chainId: 137,
-  },
-  {
-    id: "arbitrum",
-    name: "Arbitrum",
-    chainId: 42161,
-  },
-  {
-    id: "optimism",
-    name: "Optimism",
-    chainId: 10,
-  },
-  {
-    id: "goerli",
-    name: "Goerli",
-    chainId: 5,
-    testnet: true,
+    id: "pulsechain",
+    name: "Pulsechain",
+    chainId: 369,
   },
 ];
 
