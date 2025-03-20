@@ -1,40 +1,50 @@
-"use client"
+"use client";
 
-import { Menu, X, Search, Bell, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Menu, X, Search, Bell, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { NetworkSelector } from "./network-selector";
 
 interface HeaderProps {
-  sidebarOpen: boolean
-  setSidebarOpen: (open: boolean) => void
-  activeTab?: string
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+  activeTab?: string;
 }
 
-export default function Header({ sidebarOpen, setSidebarOpen, activeTab = "dashboard" }: HeaderProps) {
+export default function Header({
+  sidebarOpen,
+  setSidebarOpen,
+  activeTab = "dashboard",
+}: HeaderProps) {
   // Function to get the title based on the active tab
   const getTitle = () => {
     switch (activeTab) {
       case "dashboard":
-        return "Dashboard"
+        return "Dashboard";
       case "transactions":
-        return "Transactions"
+        return "Transactions";
       case "blocks":
-        return "Blocks"
+        return "Blocks";
       case "wallet":
-        return "Wallet"
+        return "Wallet";
       case "liquidity":
-        return "Liquidity Pools"
+        return "Liquidity Pools";
       case "analytics":
-        return "Analytics"
+        return "Analytics";
       case "settings":
-        return "Settings"
+        return "Settings";
       case "help":
-        return "Help & Support"
+        return "Help & Support";
       default:
-        return "Dashboard"
+        return "Dashboard";
     }
-  }
+  };
 
   return (
     <header className="border-b border-gray-800/50 bg-black/60 backdrop-blur-sm">
@@ -46,7 +56,11 @@ export default function Header({ sidebarOpen, setSidebarOpen, activeTab = "dashb
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="mr-2 text-gray-400 hover:text-cyan-400"
           >
-            {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {sidebarOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
           </Button>
           <div className="flex items-center gap-2">
             <div className="relative h-8 w-8">
@@ -74,19 +88,31 @@ export default function Header({ sidebarOpen, setSidebarOpen, activeTab = "dashb
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="relative text-gray-400 hover:text-cyan-400">
+        <div className="flex items-center gap-4">
+          <NetworkSelector />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative text-gray-400 hover:text-cyan-400"
+          >
             <Bell className="h-5 w-5" />
             <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-cyan-500"></span>
           </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-cyan-400">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-400 hover:text-cyan-400"
+              >
                 <User className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 border-gray-800 bg-black/90 backdrop-blur-sm">
+            <DropdownMenuContent
+              align="end"
+              className="w-56 border-gray-800 bg-black/90 backdrop-blur-sm"
+            >
               <DropdownMenuItem className="text-gray-300 focus:bg-gray-800 focus:text-cyan-400">
                 Profile
               </DropdownMenuItem>
@@ -101,6 +127,5 @@ export default function Header({ sidebarOpen, setSidebarOpen, activeTab = "dashb
         </div>
       </div>
     </header>
-  )
+  );
 }
-
