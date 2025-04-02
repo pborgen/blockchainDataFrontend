@@ -20,6 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useRouter } from "next/navigation";
 
 interface SidebarProps {
   open: boolean;
@@ -39,6 +40,7 @@ export default function Sidebar({
   setCollapsed,
 }: SidebarProps) {
   const isMobile = useMobile();
+  const router = useRouter();
 
   const links = [
     { id: "dashboard", name: "Dashboard", icon: LayoutDashboard },
@@ -53,6 +55,7 @@ export default function Sidebar({
     if (isMobile) {
       setOpen(false);
     }
+    router.push(`/${tabId}`);
   };
 
   const toggleCollapse = () => {
@@ -127,7 +130,7 @@ export default function Sidebar({
                     </Button>
                   </TooltipTrigger>
                   {collapsed && (
-                    <TooltipContent side="right" className="z-[60]">
+                    <TooltipContent side="right" style={{ zIndex: 60 }}>
                       {link.name}
                     </TooltipContent>
                   )}

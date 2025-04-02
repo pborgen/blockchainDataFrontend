@@ -31,18 +31,10 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-gradient-to-br from-black via-gray-900 to-black">
-      <Sidebar
-        open={sidebarOpen}
-        setOpen={setSidebarOpen}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        collapsed={sidebarCollapsed}
-        setCollapsed={setSidebarCollapsed}
-      />
+
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} activeTab={activeTab} />
-
+  
         <div className="flex-1 overflow-auto p-4 md:p-6">
           {activeTab === "dashboard" ? (
             // Dashboard View

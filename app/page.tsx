@@ -1,14 +1,5 @@
-import { Suspense } from "react"
-import Dashboard from "@/components/dashboard"
-import { DashboardSkeleton } from "@/components/skeletons"
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return (
-    <main className="min-h-screen bg-black">
-      <Suspense fallback={<DashboardSkeleton />}>
-        <Dashboard />
-      </Suspense>
-    </main>
-  )
+  redirect("/dashboard");
 }
-

@@ -157,7 +157,7 @@ export default function WalletInfo() {
                   <Progress
                     value={50 + token.change24h}
                     className="h-1 bg-gray-800"
-                    indicatorClassName={token.change24h >= 0 ? "bg-green-500" : "bg-red-500"}
+        
                   />
                   <span className={cn("text-xs", token.change24h >= 0 ? "text-green-400" : "text-red-400")}>
                     {token.change24h >= 0 ? "+" : ""}
