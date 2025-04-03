@@ -440,7 +440,7 @@ export default function WalletNetwork() {
   }, []);
 
   return (
-    <div className="h-[500px] w-full rounded-lg border border-gray-800 bg-black/40 p-4">
+    <div className="h-[calc(100vh-2rem)] w-full rounded-lg border border-gray-800 bg-black/40 p-4">
       <div className="relative max-w-md">
         <Input
           placeholder="Token Address"
@@ -451,7 +451,9 @@ export default function WalletNetwork() {
       <h3 className="mb-4 text-lg font-medium text-gray-100">
         Wallet Interactions
       </h3>
-      <svg ref={svgRef} className="w-full h-full"></svg>
+      <div className="h-[calc(100%-8rem)]">
+        <svg ref={svgRef} className="w-full h-full"></svg>
+      </div>
     </div>
   );
 }
