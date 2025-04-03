@@ -1,3 +1,5 @@
+import { MyResponse, TransactionGroupBy } from "../types/transactions";
+
 // Mock transactions data
 export async function fetchTransactions() {
   // Simulate API delay
@@ -372,12 +374,12 @@ export async function fetchLiquidityPools(dexId: string) {
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-
-export async function fetchTransferEventsGroupBy(address: string): Promise<TransactionGroupBy> {
+console.log(API_BASE_URL);
+export async function fetchTransferEventsGroupBy(
+  address: string
+): Promise<MyResponse<TransactionGroupBy[]>> {
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/transfer-events/${address}`
-    );
+    const response = await fetch(`${API_BASE_URL}/transfer-events/${address}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

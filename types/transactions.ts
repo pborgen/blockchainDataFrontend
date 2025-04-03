@@ -1,12 +1,21 @@
-interface TransactionNode {
+export interface MyResponse<T> {
+  success: boolean;
+  data: T;
+  pagination: Pagination;
+}
+
+export interface Pagination {
+  currentPage: number;
+  totalPages: number;
+  totalResults: number;
+}
+
+export interface TransactionNode {
   id: string;
-  group: number;
-  value: number;
-  balance: number;
   transactionCount: number;
 }
 
-interface TransactionLink {
+export interface TransactionLink {
   source: string;
   target: string;
   value: number;
@@ -15,7 +24,7 @@ interface TransactionLink {
   amount?: number;
 }
 
-interface TransactionGroupBy {
+export interface TransactionGroupBy {
   FromAddress: string;
   ToAddress: string;
   TransactionCount: number;

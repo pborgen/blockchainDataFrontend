@@ -4,45 +4,90 @@ import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
-
-
-
-// Sample data - replace with real data
-const nodes: TransactionNode[] = [
-  {
-    id: "0x1234...5678",
-    group: 1,
-    value: 5,
-    balance: 100.5,
-    transactionCount: 150,
-  },
-  {
-    id: "0xabcd...efgh",
-    group: 1,
-    value: 3,
-    balance: 50.2,
-    transactionCount: 75,
-  },
-];
-
-const links: TransactionLink[] = [
-  {
-    source: "0x1234...5678",
-    target: "0xabcd...efgh",
-    value: 2,
-    type: "transfer",
-    timestamp: "2024-03-20T10:30:00Z",
-    amount: 5.2,
-  },
-];
+import { fetchTransferEventsGroupBy } from "@/lib/api";
+import {
+  TransactionNode,
+  TransactionLink,
+  TransactionGroupBy,
+} from "@/types/transactions";
 
 export default function WalletNetwork() {
   const svgRef = useRef<SVGSVGElement>(null);
   const [activeNode, setActiveNode] = useState<TransactionNode | null>(null);
   const [activeLink, setActiveLink] = useState<TransactionLink | null>(null);
+  const [searchAddress, setSearchAddress] = useState(
+    "0xD1C4c78472638155233A1cB9CECEBed04C04E9B8"
+  );
+  const [nodes, setNodes] = useState<TransactionNode[]>([]);
+  const [links, setLinks] = useState<TransactionLink[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSearch = async () => {
+    if (!searchAddress) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      console.log("Searching for address:", searchAddress);
+      const response = await fetchTransferEventsGroupBy(searchAddress);
+      console.log("Received data:", response);
+
+      // Transform the data into nodes and links
+      const data = response.data;
+
+      // Create a map to track unique nodes and their transaction counts
+      const nodeMap = new Map<string, TransactionNode>();
+
+      // Process each transaction to build nodes and links
+      const processedLinks: TransactionLink[] = [];
+
+      data.forEach((item: TransactionGroupBy) => {
+        // Add or update source node
+        if (!nodeMap.has(item.FromAddress)) {
+          nodeMap.set(item.FromAddress, {
+            id: item.FromAddress,
+            transactionCount: item.TransactionCount,
+          });
+        }
+
+        // Add or update target node
+        if (!nodeMap.has(item.ToAddress)) {
+          nodeMap.set(item.ToAddress, {
+            id: item.ToAddress,
+            transactionCount: item.TransactionCount,
+          });
+        }
+
+        // Add link
+        processedLinks.push({
+          source: item.FromAddress,
+          target: item.ToAddress,
+          value: item.TransactionCount,
+          type: "transfer",
+          timestamp: new Date().toISOString(),
+        });
+      });
+
+      // Convert node map to array
+      const processedNodes = Array.from(nodeMap.values());
+
+      console.log("Processed nodes:", processedNodes);
+      console.log("Processed links:", processedLinks);
+
+      setNodes(processedNodes);
+      setLinks(processedLinks);
+    } catch (err) {
+      console.error("Error details:", err);
+      setError("Failed to fetch wallet data");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (!svgRef.current) return;
+    if (!svgRef.current || nodes.length === 0) return;
 
     const width = svgRef.current.clientWidth;
     const height = svgRef.current.clientHeight;
@@ -61,9 +106,9 @@ export default function WalletNetwork() {
       .force(
         "link",
         d3
-          .forceLink(links)
+          .forceLink(links as any)
           .id((d: any) => d.id)
-          .distance(100)
+          .distance(50)
       )
       .force("charge", d3.forceManyBody().strength(-300))
       .force("center", d3.forceCenter(width / 2, height / 2))
@@ -96,9 +141,29 @@ export default function WalletNetwork() {
       .selectAll("circle")
       .data(nodes)
       .join("circle")
-      .attr("r", (d) => d.value * 5)
+      .attr("r", (d) => d.transactionCount * 5)
       .attr("stroke", "#1f2937")
       .attr("stroke-width", 2);
+
+    // Add drag behavior
+    const drag = d3
+      .drag<SVGCircleElement, TransactionNode>()
+      .on("start", (event) => {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        event.subject.fx = event.subject.x;
+        event.subject.fy = event.subject.y;
+      })
+      .on("drag", (event) => {
+        event.subject.fx = event.x;
+        event.subject.fy = event.y;
+      })
+      .on("end", (event) => {
+        if (!event.active) simulation.alphaTarget(0);
+        event.subject.fx = null;
+        event.subject.fy = null;
+      });
+
+    node.call(drag as any);
 
     // Add labels
     const label = svg
@@ -106,7 +171,7 @@ export default function WalletNetwork() {
       .selectAll("text")
       .data(nodes)
       .join("text")
-      .text((d) => d.id)
+
       .attr("font-size", "12px")
       .attr("fill", "#9ca3af")
       .attr("text-anchor", "middle")
@@ -137,18 +202,12 @@ export default function WalletNetwork() {
         <div class="space-y-2">
           <div class="flex items-center justify-between">
             <span class="font-medium text-cyan-400">${d.id}</span>
-            
           </div>
           <div class="text-sm">
-
-
             <div class="flex justify-between">
               <span class="text-gray-400">Transactions:</span>
               <span class="text-gray-200">${d.transactionCount}</span>
             </div>
-         
-          
-          
           </div>
         </div>
       `
@@ -265,47 +324,44 @@ export default function WalletNetwork() {
       label.attr("x", (d: any) => d.x).attr("y", (d: any) => d.y);
     });
 
-    // Add drag behavior
-    // node.call(
-    //   d3
-    //     .drag<SVGCircleElement, WalletNode>()
-    //     .on("start", (event) => {
-    //       if (!event.active) simulation.alphaTarget(0.3).restart();
-    //       event.subject.fx = event.subject.x;
-    //       event.subject.fy = event.subject.y;
-    //     })
-    //     .on("drag", (event) => {
-    //       event.subject.fx = event.x;
-    //       event.subject.fy = event.y;
-    //     })
-    //     .on("end", (event) => {
-    //       if (!event.active) simulation.alphaTarget(0);
-    //       event.subject.fx = null;
-    //       event.subject.fy = null;
-    //     })
-    // );
-
     return () => {
       simulation.stop();
       tooltip.remove();
     };
-  }, []);
+  }, [nodes, links]);
 
   return (
     <div className="h-[calc(100vh-2rem)] w-full rounded-lg border border-gray-800 bg-black/40 p-4">
       <div className="relative max-w-md">
         <Input
           placeholder="Token Address"
+          value={searchAddress}
+          onChange={(e) => setSearchAddress(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           className="border-gray-800 bg-black/40 pl-10 text-gray-300 placeholder:text-gray-500 focus:border-cyan-500 focus:ring-cyan-500/20"
         />
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+        <Search
+          className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500 cursor-pointer"
+          onClick={handleSearch}
+        />
       </div>
+      {error && (
+        <div className="mt-4 p-2 text-red-500 bg-red-500/10 rounded">
+          {error}
+        </div>
+      )}
       <h3 className="mb-4 text-lg font-medium text-gray-100">
         Wallet Interactions
       </h3>
-      <div className="h-[calc(100%-8rem)]">
-        <svg ref={svgRef} className="w-full h-full"></svg>
-      </div>
+      {isLoading ? (
+        <div className="flex items-center justify-center h-[calc(100%-8rem)]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500"></div>
+        </div>
+      ) : (
+        <div className="h-[calc(100%-8rem)]">
+          <svg ref={svgRef} className="w-full h-full"></svg>
+        </div>
+      )}
     </div>
   );
 }
