@@ -10,6 +10,7 @@ import {
   TransactionLink,
   TransactionGroupBy,
 } from "@/types/transactions";
+import { ViewMode } from "@/types/view-modes";
 
 export default function WalletNetwork() {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -18,6 +19,7 @@ export default function WalletNetwork() {
   const [searchAddress, setSearchAddress] = useState(
     "0xD1C4c78472638155233A1cB9CECEBed04C04E9B8"
   );
+  const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.ALL);
   const [nodes, setNodes] = useState<TransactionNode[]>([]);
   const [links, setLinks] = useState<TransactionLink[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +32,10 @@ export default function WalletNetwork() {
     setError(null);
 
     try {
-      const response = await fetchTransferEventsGroupBy(searchAddress);
+      const response = await fetchTransferEventsGroupBy(
+        searchAddress,
+        viewMode
+      );
 
       // Transform the data into nodes and links
       const data = response.data;
@@ -136,7 +141,7 @@ export default function WalletNetwork() {
       .selectAll("circle")
       .data(nodes)
       .join("circle")
-      .attr("r", (d) => d.transactionCount * 5)
+      .attr("r", (d) => d.transactionCount * 2.5)
       .attr("stroke", "#1f2937")
       .attr("stroke-width", 2);
 
@@ -305,24 +310,64 @@ export default function WalletNetwork() {
       simulation.stop();
       tooltip.remove();
     };
-  }, [nodes, links]);
+  }, [nodes, links, viewMode]);
 
   return (
     <div className="h-[calc(100vh-2rem)] w-full rounded-lg border border-gray-800 bg-black/40 p-4">
-      <div className="relative max-w-md">
-        <Input
-          placeholder="Token Address"
-          value={searchAddress}
-          onChange={(e) => setSearchAddress(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          className="border-gray-800 bg-black/40 pl-10 text-gray-300 placeholder:text-gray-500 focus:border-cyan-500 focus:ring-cyan-500/20"
-        />
-        <Search
-          className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500 cursor-pointer"
-          onClick={handleSearch}
-        />
+      <div className="flex items-center gap-4">
+        <div className="relative max-w-md flex-1">
+          <Input
+            placeholder="Token Address"
+            value={searchAddress}
+            onChange={(e) => setSearchAddress(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            className="border-gray-800 bg-black/40 pl-10 text-gray-300 placeholder:text-gray-500 focus:border-cyan-500 focus:ring-cyan-500/20"
+          />
+          <Search
+            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500 cursor-pointer"
+            onClick={handleSearch}
+          />
+        </div>
+
+        <div className="flex items-center gap-4">
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="viewMode"
+              value={ViewMode.ALL}
+              checked={viewMode === ViewMode.ALL}
+              onChange={(e) => setViewMode(e.target.value as ViewMode)}
+              className="text-cyan-500 focus:ring-cyan-500"
+            />
+            <span className="text-sm text-gray-300">All</span>
+          </label>
+
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="viewMode"
+              value={ViewMode.INCOMING}
+              checked={viewMode === ViewMode.INCOMING}
+              onChange={(e) => setViewMode(e.target.value as ViewMode)}
+              className="text-cyan-500 focus:ring-cyan-500"
+            />
+            <span className="text-sm text-gray-300">Incoming</span>
+          </label>
+
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="viewMode"
+              value={ViewMode.OUTGOING}
+              checked={viewMode === ViewMode.OUTGOING}
+              onChange={(e) => setViewMode(e.target.value as ViewMode)}
+              className="text-cyan-500 focus:ring-cyan-500"
+            />
+            <span className="text-sm text-gray-300">Outgoing</span>
+          </label>
+        </div>
       </div>
-      
+
       {error && (
         <div className="mt-4 p-2 text-red-500 bg-red-500/10 rounded">
           {error}

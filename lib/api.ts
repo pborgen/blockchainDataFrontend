@@ -1,4 +1,5 @@
 import { MyResponse, TransactionGroupBy } from "../types/transactions";
+import { ViewMode } from "../types/view-modes";
 
 // Mock transactions data
 export async function fetchTransactions() {
@@ -376,10 +377,13 @@ export async function fetchLiquidityPools(dexId: string) {
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 console.log(API_BASE_URL);
 export async function fetchTransferEventsGroupBy(
-  address: string
+  address: string,
+  viewMode: ViewMode
 ): Promise<MyResponse<TransactionGroupBy[]>> {
   try {
-    const response = await fetch(`${API_BASE_URL}/transfer-events/${address}`);
+    const response = await fetch(
+      `${API_BASE_URL}/transfer-events/${address}?viewMode=${viewMode}`
+    );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
