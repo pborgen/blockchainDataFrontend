@@ -1,7 +1,7 @@
 // Mock transactions data
 export async function fetchTransactions() {
   // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1500))
+  await new Promise((resolve) => setTimeout(resolve, 1500));
 
   return [
     {
@@ -49,15 +49,15 @@ export async function fetchTransactions() {
       timestamp: Math.floor(Date.now() / 1000) - 86400, // 1 day ago
       type: "out" as const,
     },
-  ]
+  ];
 }
 
 // Mock blocks data
 export async function fetchBlocks() {
   // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1500))
+  await new Promise((resolve) => setTimeout(resolve, 1500));
 
-  const now = Math.floor(Date.now() / 1000)
+  const now = Math.floor(Date.now() / 1000);
 
   return [
     {
@@ -105,13 +105,13 @@ export async function fetchBlocks() {
       miner: "0xa1b2c3d4e5f6789012345678901234567890abcd",
       gasUsed: "13,579,246",
     },
-  ]
+  ];
 }
 
 // Mock network stats
 export async function fetchNetworkStats() {
   // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1500))
+  await new Promise((resolve) => setTimeout(resolve, 1500));
 
   return {
     price: 3245.67,
@@ -121,13 +121,13 @@ export async function fetchNetworkStats() {
     tps: 15.7,
     blockTime: 12.3,
     difficulty: 12345678901234,
-  }
+  };
 }
 
 // Mock wallet info
 export async function fetchWalletInfo() {
   // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1500))
+  await new Promise((resolve) => setTimeout(resolve, 1500));
 
   return {
     address: "0x1234567890abcdef1234567890abcdef12345678",
@@ -169,68 +169,71 @@ export async function fetchWalletInfo() {
         change24h: 5.67,
       },
     ],
-  }
+  };
 }
 
 // Mock price chart data
 export async function fetchPriceData(timeRange: string) {
   // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1500))
+  await new Promise((resolve) => setTimeout(resolve, 1500));
 
-  const now = Date.now()
-  const dataPoints = 100
-  let startTime: number
+  const now = Date.now();
+  const dataPoints = 100;
+  let startTime: number;
 
   switch (timeRange) {
     case "1D":
-      startTime = now - 24 * 60 * 60 * 1000 // 1 day
-      break
+      startTime = now - 24 * 60 * 60 * 1000; // 1 day
+      break;
     case "1W":
-      startTime = now - 7 * 24 * 60 * 60 * 1000 // 1 week
-      break
+      startTime = now - 7 * 24 * 60 * 60 * 1000; // 1 week
+      break;
     case "1M":
-      startTime = now - 30 * 24 * 60 * 60 * 1000 // 1 month
-      break
+      startTime = now - 30 * 24 * 60 * 60 * 1000; // 1 month
+      break;
     case "3M":
-      startTime = now - 90 * 24 * 60 * 60 * 1000 // 3 months
-      break
+      startTime = now - 90 * 24 * 60 * 60 * 1000; // 3 months
+      break;
     case "1Y":
-      startTime = now - 365 * 24 * 60 * 60 * 1000 // 1 year
-      break
+      startTime = now - 365 * 24 * 60 * 60 * 1000; // 1 year
+      break;
     case "ALL":
-      startTime = now - 5 * 365 * 24 * 60 * 60 * 1000 // 5 years
-      break
+      startTime = now - 5 * 365 * 24 * 60 * 60 * 1000; // 5 years
+      break;
     default:
-      startTime = now - 24 * 60 * 60 * 1000 // Default to 1 day
+      startTime = now - 24 * 60 * 60 * 1000; // Default to 1 day
   }
 
-  const basePrice = 3245.67
-  const volatility = timeRange === "1D" ? 0.02 : timeRange === "1W" ? 0.05 : 0.2
-  const trend = 0.01 // Slight upward trend
+  const basePrice = 3245.67;
+  const volatility =
+    timeRange === "1D" ? 0.02 : timeRange === "1W" ? 0.05 : 0.2;
+  const trend = 0.01; // Slight upward trend
 
-  const chartData = []
+  const chartData = [];
 
   for (let i = 0; i < dataPoints; i++) {
-    const timestamp = Math.floor(startTime + (i * (now - startTime)) / dataPoints / 1000)
-    const randomFactor = 1 + (Math.random() - 0.5) * volatility
-    const trendFactor = 1 + trend * (i / dataPoints)
-    const price = basePrice * randomFactor * trendFactor
+    const timestamp = Math.floor(
+      startTime + (i * (now - startTime)) / dataPoints / 1000
+    );
+    const randomFactor = 1 + (Math.random() - 0.5) * volatility;
+    const trendFactor = 1 + trend * (i / dataPoints);
+    const price = basePrice * randomFactor * trendFactor;
 
     chartData.push({
       timestamp,
       price,
-    })
+    });
   }
 
-  const current = chartData[chartData.length - 1].price
-  const first = chartData[0].price
-  const change = current - first
-  const changePercent = (change / first) * 100
+  const current = chartData[chartData.length - 1].price;
+  const first = chartData[0].price;
+  const change = current - first;
+  const changePercent = (change / first) * 100;
 
   // Calculate 24h high and low
-  const prices = chartData.map((d) => d.price)
-  const high24h = Math.max(...prices)
-  const low24h = Math.min(...prices)
+  const prices = chartData.map((d) => d.price);
+  const high24h = Math.max(...prices);
+  const low24h = Math.min(...prices);
 
   return {
     current,
@@ -239,13 +242,13 @@ export async function fetchPriceData(timeRange: string) {
     high24h,
     low24h,
     chartData,
-  }
+  };
 }
 
 // Mock liquidity pools data
 export async function fetchLiquidityPools(dexId: string) {
   // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1500))
+  await new Promise((resolve) => setTimeout(resolve, 1500));
 
   // Base pools that will be modified based on the selected DEX
   const basePools = [
@@ -309,7 +312,7 @@ export async function fetchLiquidityPools(dexId: string) {
       volume24h: 7500000,
       feeTier: "0.3%",
     },
-  ]
+  ];
 
   // Modify data based on the selected DEX
   switch (dexId) {
@@ -317,8 +320,10 @@ export async function fetchLiquidityPools(dexId: string) {
       return basePools.map((pool) => ({
         ...pool,
         apy: pool.apy * 1.1, // Uniswap has slightly higher APY
-        feeTier: ["0.01%", "0.05%", "0.3%", "1%"][Math.floor(Math.random() * 4)],
-      }))
+        feeTier: ["0.01%", "0.05%", "0.3%", "1%"][
+          Math.floor(Math.random() * 4)
+        ],
+      }));
 
     case "sushiswap":
       return basePools.map((pool) => ({
@@ -327,7 +332,7 @@ export async function fetchLiquidityPools(dexId: string) {
         apy: pool.apy * 1.3, // but higher APY
         volume24h: pool.volume24h * 0.8,
         feeTier: "0.3%", // SushiSwap has fixed fee tier
-      }))
+      }));
 
     case "pancakeswap":
       return basePools.map((pool) => ({
@@ -336,18 +341,21 @@ export async function fetchLiquidityPools(dexId: string) {
         apy: pool.apy * 1.2,
         volume24h: pool.volume24h * 0.9,
         feeTier: ["0.17%", "0.25%", "0.5%"][Math.floor(Math.random() * 3)],
-      }))
+      }));
 
     case "curve":
       return basePools
-        .filter((pool) => pool.tokenPair.includes("USD") || pool.tokenPair.includes("DAI")) // Curve focuses on stablecoins
+        .filter(
+          (pool) =>
+            pool.tokenPair.includes("USD") || pool.tokenPair.includes("DAI")
+        ) // Curve focuses on stablecoins
         .map((pool) => ({
           ...pool,
           tvl: pool.tvl * 1.2,
           apy: pool.apy * 0.7, // Lower APY for stablecoins
           volume24h: pool.volume24h * 1.1,
           feeTier: "0.04%", // Curve has low fees
-        }))
+        }));
 
     case "balancer":
       return basePools.map((pool) => ({
@@ -356,10 +364,26 @@ export async function fetchLiquidityPools(dexId: string) {
         apy: pool.apy * 1.1,
         volume24h: pool.volume24h * 0.7,
         feeTier: ["0.1%", "0.3%", "0.5%"][Math.floor(Math.random() * 3)],
-      }))
+      }));
 
     default:
-      return basePools
+      return basePools;
   }
 }
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
+export async function fetchTransferEventsGroupBy(address: string): Promise<TransactionGroupBy> {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/transfer-events/${address}`
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching wallet network:", error);
+    throw error;
+  }
+}

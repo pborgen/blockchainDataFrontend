@@ -5,41 +5,16 @@ import * as d3 from "d3";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
 
-interface WalletNode {
-  id: string;
-  group: number;
-  value: number;
-  balance: number;
-  transactionCount: number;
-  firstSeen: string;
-  lastActive: string;
-  type: "contract" | "wallet" | "exchange";
-  riskScore: number;
-  tags: string[];
-}
 
-interface WalletLink {
-  source: string;
-  target: string;
-  value: number;
-  type: "transfer" | "interaction" | "contract_call";
-  timestamp: string;
-  amount?: number;
-}
 
 // Sample data - replace with real data
-const nodes: WalletNode[] = [
+const nodes: TransactionNode[] = [
   {
     id: "0x1234...5678",
     group: 1,
     value: 5,
     balance: 100.5,
     transactionCount: 150,
-    firstSeen: "2023-01-15",
-    lastActive: "2024-03-20",
-    type: "wallet",
-    riskScore: 0.2,
-    tags: ["whale", "active"],
   },
   {
     id: "0xabcd...efgh",
@@ -47,63 +22,10 @@ const nodes: WalletNode[] = [
     value: 3,
     balance: 50.2,
     transactionCount: 75,
-    firstSeen: "2023-03-10",
-    lastActive: "2024-03-19",
-    type: "contract",
-    riskScore: 0.1,
-    tags: ["defi", "verified"],
-  },
-  {
-    id: "0x2468...1357",
-    group: 2,
-    value: 4,
-    balance: 20.8,
-    transactionCount: 200,
-    firstSeen: "2022-12-05",
-    lastActive: "2024-03-18",
-    type: "exchange",
-    riskScore: 0.3,
-    tags: ["cex", "high_volume"],
-  },
-  {
-    id: "0x9876...5432",
-    group: 2,
-    value: 2,
-    balance: 10.1,
-    transactionCount: 30,
-    firstSeen: "2023-06-20",
-    lastActive: "2024-03-17",
-    type: "wallet",
-    riskScore: 0.4,
-    tags: ["new", "low_activity"],
-  },
-  {
-    id: "0x1357...2468",
-    group: 3,
-    value: 6,
-    balance: 30.7,
-    transactionCount: 500,
-    firstSeen: "2022-08-15",
-    lastActive: "2024-03-16",
-    type: "contract",
-    riskScore: 0.05,
-    tags: ["nft", "verified"],
-  },
-  {
-    id: "0x5432...9876",
-    group: 3,
-    value: 3,
-    balance: 15.3,
-    transactionCount: 100,
-    firstSeen: "2023-09-01",
-    lastActive: "2024-03-15",
-    type: "wallet",
-    riskScore: 0.6,
-    tags: ["suspicious", "high_risk"],
   },
 ];
 
-const links: WalletLink[] = [
+const links: TransactionLink[] = [
   {
     source: "0x1234...5678",
     target: "0xabcd...efgh",
@@ -112,41 +34,12 @@ const links: WalletLink[] = [
     timestamp: "2024-03-20T10:30:00Z",
     amount: 5.2,
   },
-  {
-    source: "0x1234...5678",
-    target: "0x2468...1357",
-    value: 1,
-    type: "interaction",
-    timestamp: "2024-03-19T15:45:00Z",
-  },
-  {
-    source: "0xabcd...efgh",
-    target: "0x9876...5432",
-    value: 3,
-    type: "contract_call",
-    timestamp: "2024-03-18T08:20:00Z",
-  },
-  {
-    source: "0x2468...1357",
-    target: "0x1357...2468",
-    value: 2,
-    type: "transfer",
-    timestamp: "2024-03-17T12:15:00Z",
-    amount: 2.8,
-  },
-  {
-    source: "0x9876...5432",
-    target: "0x5432...9876",
-    value: 1,
-    type: "interaction",
-    timestamp: "2024-03-16T09:30:00Z",
-  },
 ];
 
 export default function WalletNetwork() {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [activeNode, setActiveNode] = useState<WalletNode | null>(null);
-  const [activeLink, setActiveLink] = useState<WalletLink | null>(null);
+  const [activeNode, setActiveNode] = useState<TransactionNode | null>(null);
+  const [activeLink, setActiveLink] = useState<TransactionLink | null>(null);
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -204,18 +97,6 @@ export default function WalletNetwork() {
       .data(nodes)
       .join("circle")
       .attr("r", (d) => d.value * 5)
-      .attr("fill", (d) => {
-        switch (d.type) {
-          case "wallet":
-            return "#22d3ee"; // cyan
-          case "contract":
-            return "#a78bfa"; // purple
-          case "exchange":
-            return "#f472b6"; // pink
-          default:
-            return "#9ca3af"; // gray
-        }
-      })
       .attr("stroke", "#1f2937")
       .attr("stroke-width", 2);
 
@@ -247,11 +128,8 @@ export default function WalletNetwork() {
       .style("max-width", "300px");
 
     // Common function to show node details
-    const showNodeDetails = (event: any, d: WalletNode) => {
+    const showNodeDetails = (event: any, d: TransactionNode) => {
       tooltip.transition().duration(200).style("opacity", 0.9);
-
-      const riskColor = d.riskScore > 0.5 ? "#ef4444" : "#22c55e";
-      const riskText = d.riskScore > 0.5 ? "High Risk" : "Low Risk";
 
       tooltip
         .html(
@@ -259,44 +137,18 @@ export default function WalletNetwork() {
         <div class="space-y-2">
           <div class="flex items-center justify-between">
             <span class="font-medium text-cyan-400">${d.id}</span>
-            <span class="text-xs px-2 py-1 rounded" style="background-color: ${riskColor}">${riskText}</span>
+            
           </div>
           <div class="text-sm">
-            <div class="flex justify-between">
-              <span class="text-gray-400">Type:</span>
-              <span class="text-gray-200">${d.type}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-400">Balance:</span>
-              <span class="text-gray-200">${d.balance} ETH</span>
-            </div>
+
+
             <div class="flex justify-between">
               <span class="text-gray-400">Transactions:</span>
               <span class="text-gray-200">${d.transactionCount}</span>
             </div>
-            <div class="flex justify-between">
-              <span class="text-gray-400">First Seen:</span>
-              <span class="text-gray-200">${new Date(
-                d.firstSeen
-              ).toLocaleDateString()}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-400">Last Active:</span>
-              <span class="text-gray-200">${new Date(
-                d.lastActive
-              ).toLocaleDateString()}</span>
-            </div>
-            <div class="mt-2">
-              <span class="text-gray-400">Tags:</span>
-              <div class="flex flex-wrap gap-1 mt-1">
-                ${d.tags
-                  .map(
-                    (tag) =>
-                      `<span class="text-xs px-2 py-0.5 rounded bg-gray-800">${tag}</span>`
-                  )
-                  .join("")}
-              </div>
-            </div>
+         
+          
+          
           </div>
         </div>
       `
@@ -306,7 +158,7 @@ export default function WalletNetwork() {
     };
 
     // Common function to show link details
-    const showLinkDetails = (event: any, d: WalletLink) => {
+    const showLinkDetails = (event: any, d: TransactionLink) => {
       tooltip.transition().duration(200).style("opacity", 0.9);
 
       const sourceNode = nodes.find((n) => n.id === d.source);
