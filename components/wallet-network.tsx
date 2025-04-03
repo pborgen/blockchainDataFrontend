@@ -10,7 +10,7 @@ import {
   TransactionLink,
   TransactionGroupBy,
 } from "@/types/transactions";
-import { ViewMode } from "@/types/view-modes";
+import { FilterMode } from "@/types/view-modes";
 
 export default function WalletNetwork() {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -19,7 +19,8 @@ export default function WalletNetwork() {
   const [searchAddress, setSearchAddress] = useState(
     "0xD1C4c78472638155233A1cB9CECEBed04C04E9B8"
   );
-  const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.ALL);
+  const [filterMode, setFilterMode] = useState<FilterMode>(FilterMode.ALL);
+
   const [nodes, setNodes] = useState<TransactionNode[]>([]);
   const [links, setLinks] = useState<TransactionLink[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +35,7 @@ export default function WalletNetwork() {
     try {
       const response = await fetchTransferEventsGroupBy(
         searchAddress,
-        viewMode
+        filterMode
       );
 
       // Transform the data into nodes and links
@@ -220,7 +221,11 @@ export default function WalletNetwork() {
     const showLinkDetails = (event: any, d: TransactionLink) => {
       tooltip.transition().duration(200).style("opacity", 0.9);
 
-      console.log(d);
+      // @ts-ignore
+      const from = d.source.id;
+      // @ts-ignore
+      const to = d.target.id;
+
       tooltip
         .html(
           `
@@ -229,11 +234,11 @@ export default function WalletNetwork() {
           <div class="text-sm">
             <div class="flex justify-between">
               <span class="text-gray-400">From:</span>
-              <span class="text-gray-200">${d.source.id}</span>
+              <span class="text-gray-200">${from}</span>
             </div>
             <div class="flex justify-between">
               <span class="text-gray-400">To:</span>
-              <span class="text-gray-200">${d.target.id}</span>
+              <span class="text-gray-200">${to}</span>
             </div>
           </div>
         </div>
@@ -310,7 +315,7 @@ export default function WalletNetwork() {
       simulation.stop();
       tooltip.remove();
     };
-  }, [nodes, links, viewMode]);
+  }, [nodes, links, filterMode]);
 
   return (
     <div className="h-[calc(100vh-2rem)] w-full rounded-lg border border-gray-800 bg-black/40 p-4">
@@ -329,14 +334,14 @@ export default function WalletNetwork() {
           />
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 border border-gray-800 rounded-md p-2">
           <label className="flex items-center gap-2">
             <input
               type="radio"
               name="viewMode"
-              value={ViewMode.ALL}
-              checked={viewMode === ViewMode.ALL}
-              onChange={(e) => setViewMode(e.target.value as ViewMode)}
+              value={FilterMode.ALL}
+              checked={filterMode === FilterMode.ALL}
+              onChange={(e) => setFilterMode(e.target.value as FilterMode)}
               className="text-cyan-500 focus:ring-cyan-500"
             />
             <span className="text-sm text-gray-300">All</span>
@@ -346,9 +351,9 @@ export default function WalletNetwork() {
             <input
               type="radio"
               name="viewMode"
-              value={ViewMode.INCOMING}
-              checked={viewMode === ViewMode.INCOMING}
-              onChange={(e) => setViewMode(e.target.value as ViewMode)}
+              value={FilterMode.INCOMING}
+              checked={filterMode === FilterMode.INCOMING}
+              onChange={(e) => setFilterMode(e.target.value as FilterMode)}
               className="text-cyan-500 focus:ring-cyan-500"
             />
             <span className="text-sm text-gray-300">Incoming</span>
@@ -358,9 +363,9 @@ export default function WalletNetwork() {
             <input
               type="radio"
               name="viewMode"
-              value={ViewMode.OUTGOING}
-              checked={viewMode === ViewMode.OUTGOING}
-              onChange={(e) => setViewMode(e.target.value as ViewMode)}
+              value={FilterMode.OUTGOING}
+              checked={filterMode === FilterMode.OUTGOING}
+              onChange={(e) => setFilterMode(e.target.value as FilterMode)}
               className="text-cyan-500 focus:ring-cyan-500"
             />
             <span className="text-sm text-gray-300">Outgoing</span>

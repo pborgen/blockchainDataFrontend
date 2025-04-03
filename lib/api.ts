@@ -1,5 +1,5 @@
 import { MyResponse, TransactionGroupBy } from "../types/transactions";
-import { ViewMode } from "../types/view-modes";
+import { FilterMode } from "../types/view-modes";
 
 // Mock transactions data
 export async function fetchTransactions() {
@@ -378,7 +378,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 console.log(API_BASE_URL);
 export async function fetchTransferEventsGroupBy(
   address: string,
-  viewMode: ViewMode
+  viewMode: FilterMode
 ): Promise<MyResponse<TransactionGroupBy[]>> {
   try {
     const response = await fetch(
