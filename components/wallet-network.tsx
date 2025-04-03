@@ -30,9 +30,7 @@ export default function WalletNetwork() {
     setError(null);
 
     try {
-      console.log("Searching for address:", searchAddress);
       const response = await fetchTransferEventsGroupBy(searchAddress);
-      console.log("Received data:", response);
 
       // Transform the data into nodes and links
       const data = response.data;
@@ -72,9 +70,6 @@ export default function WalletNetwork() {
 
       // Convert node map to array
       const processedNodes = Array.from(nodeMap.values());
-
-      console.log("Processed nodes:", processedNodes);
-      console.log("Processed links:", processedLinks);
 
       setNodes(processedNodes);
       setLinks(processedLinks);
@@ -220,9 +215,7 @@ export default function WalletNetwork() {
     const showLinkDetails = (event: any, d: TransactionLink) => {
       tooltip.transition().duration(200).style("opacity", 0.9);
 
-      const sourceNode = nodes.find((n) => n.id === d.source);
-      const targetNode = nodes.find((n) => n.id === d.target);
-
+      console.log(d);
       tooltip
         .html(
           `
@@ -231,27 +224,11 @@ export default function WalletNetwork() {
           <div class="text-sm">
             <div class="flex justify-between">
               <span class="text-gray-400">From:</span>
-              <span class="text-gray-200">${sourceNode?.id}</span>
+              <span class="text-gray-200">${d.source.id}</span>
             </div>
             <div class="flex justify-between">
               <span class="text-gray-400">To:</span>
-              <span class="text-gray-200">${targetNode?.id}</span>
-            </div>
-            ${
-              d.amount
-                ? `
-              <div class="flex justify-between">
-                <span class="text-gray-400">Amount:</span>
-                <span class="text-gray-200">${d.amount} ETH</span>
-              </div>
-            `
-                : ""
-            }
-            <div class="flex justify-between">
-              <span class="text-gray-400">Time:</span>
-              <span class="text-gray-200">${new Date(
-                d.timestamp
-              ).toLocaleString()}</span>
+              <span class="text-gray-200">${d.target.id}</span>
             </div>
           </div>
         </div>
@@ -345,6 +322,7 @@ export default function WalletNetwork() {
           onClick={handleSearch}
         />
       </div>
+      
       {error && (
         <div className="mt-4 p-2 text-red-500 bg-red-500/10 rounded">
           {error}
