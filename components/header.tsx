@@ -76,15 +76,7 @@ export default function Header({
           </div>
         </div>
 
-        <div className="hidden flex-1 px-8 md:block">
-          <div className="relative max-w-md">
-            <Input
-              placeholder="Search transactions, blocks, addresses..."
-              className="border-gray-800 bg-black/40 pl-10 text-gray-300 placeholder:text-gray-500 focus:border-cyan-500 focus:ring-cyan-500/20"
-            />
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-          </div>
-        </div>
+     
 
         <div className="flex items-center gap-4">
           <NetworkSelector />
