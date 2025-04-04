@@ -212,7 +212,7 @@ export default function WalletNetwork() {
           {viewMode === ViewMode.BUBBLE_CHART ? (
             <svg ref={svgRef} className="w-full h-full"></svg>
           ) : (
-            <div className="grid-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4 overflow-auto h-full"></div>
+            <div className="grid-container"></div>
           )}
         </div>
       )}
