@@ -32,6 +32,7 @@ function mergeConfig(nextConfig, userConfig) {
 
   for (const key in userConfig) {
     if (
+      
       typeof nextConfig[key] === 'object' &&
       !Array.isArray(nextConfig[key])
     ) {
