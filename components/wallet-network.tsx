@@ -19,9 +19,7 @@ export default function WalletNetwork() {
   const [activeNode, setActiveNode] = useState<TransactionNode | null>(null);
   const [activeLink, setActiveLink] = useState<TransactionLink | null>(null);
 
-  const [searchAddress, setSearchAddress] = useState(
-    "0xD1C4c78472638155233A1cB9CECEBed04C04E9B8"
-  );
+  const [searchAddress, setSearchAddress] = useState("");
   const [filterMode, setFilterMode] = useState<FilterMode>(FilterMode.ALL);
   const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.GRID);
 
