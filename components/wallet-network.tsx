@@ -1,6 +1,6 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
+import { getAddress } from "ethers/address";
 import * as d3 from "d3";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
@@ -19,7 +19,9 @@ export default function WalletNetwork() {
   const [activeNode, setActiveNode] = useState<TransactionNode | null>(null);
   const [activeLink, setActiveLink] = useState<TransactionLink | null>(null);
 
-  const [searchAddress, setSearchAddress] = useState("");
+  const [searchAddress, setSearchAddress] = useState(
+    "0x1c98333Fb6af951e00cA113Ab5ea09F28Ec10d8A"
+  );
   const [filterMode, setFilterMode] = useState<FilterMode>(FilterMode.ALL);
   const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.GRID);
 
@@ -37,11 +39,10 @@ export default function WalletNetwork() {
     setIsLoading(true);
     setError(null);
 
+    const address = getAddress(searchAddress.toLowerCase());
+    setSearchAddress(address);
     try {
-      const response = await fetchTransferEventsGroupBy(
-        searchAddress,
-        filterMode
-      );
+      const response = await fetchTransferEventsGroupBy(address, filterMode);
 
       // Transform the data into nodes and links
       const data = response.data;
@@ -208,9 +209,11 @@ export default function WalletNetwork() {
       ) : (
         <div className="h-[calc(100%-8rem)]">
           {viewMode === ViewMode.BUBBLE_CHART ? (
-            <svg ref={svgRef} className="w-full h-full"></svg>
+            <div className="w-full h-full overflow-auto">
+              <svg ref={svgRef} className="w-full h-full"></svg>
+            </div>
           ) : (
-            <div className="grid-container"></div>
+            <div className="grid-container w-full h-full overflow-auto"></div>
           )}
         </div>
       )}
